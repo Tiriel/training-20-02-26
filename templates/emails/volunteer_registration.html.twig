@@ -1,0 +1,12 @@
+{% extends '@email/default/notification/body.html.twig' %}
+
+{% block content %}
+    <p>Your registration for <strong>{{ volunteering.conference.name }}</strong> is confirmed.</p>
+
+    <p>
+        Start: {{ volunteering.startAt|date('d M Y, H:i') }}<br>
+        End: {{ volunteering.endAt|date('d M Y, H:i') }}
+    </p>
+
+    <p>Thank you for volunteering!</p>
+{% endblock %}

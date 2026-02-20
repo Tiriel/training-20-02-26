@@ -1,12 +1,21 @@
 framework:
     notifier:
         chatter_transports:
+            slack: '%env(SLACK_DSN)%'
         texter_transports:
+            jolinotif: '%env(JOLINOTIF_DSN)%'
         channel_policy:
             # use chat/slack, chat/telegram, sms/twilio or sms/nexmo
             urgent: ['email']
             high: ['email']
-            medium: ['email']
-            low: ['email']
+            medium: ['browser']
+            low: ['browser']
         admin_recipients:
             - { email: admin@example.com }
+
+when@test:
+    framework:
+        chatter_transports:
+            slack: 'null://null'
+        texter_transports:
+            jolinotif: 'null://null'

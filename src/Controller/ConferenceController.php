@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Form\ConferenceType;
 use App\Matching\Strategy\TagBasedStrategy;
 use App\Message\MatchVolunteerMessage;
+use App\Notifier\Conference\ConferenceCreatedNotifier;
 use App\Search\ConferenceSearchInterface;
 use App\Search\DatabaseConferenceSearch;
 use App\Security\Voter\EditionVoter;
@@ -28,7 +29,7 @@ class ConferenceController extends AbstractController
     //#[IsGranted(new Expression('is_granted("ROLE_ORGANIZER") or is_granted("ROLE_WEBSITE")'))]
     #[Route('/conference/new', name: 'app_conference_new', methods: ['GET', 'POST'])]
     #[Route('/conference/{id<\d+>}/edit', name: 'app_conference_edit', methods: ['GET', 'POST'])]
-    public function newConference(?Conference $conference, Request $request, EntityManagerInterface $manager): Response
+    public function newConference(?Conference $conference, Request $request, EntityManagerInterface $manager, ConferenceCreatedNotifier $notifier): Response
     {
         // Possible solution to SF_ADVANCED exercise 14
         //if (!$this->isGranted('ROLE_ORGANIZER') && !$this->isGranted('ROLE_WEBSITE')) {
@@ -49,6 +50,8 @@ class ConferenceController extends AbstractController
 
             $manager->persist($conference);
             $manager->flush();
+
+            $notifier->notifyNewConference($conference);
 
             return $this->redirectToRoute('app_conference_show', ['id' => $conference->getId()]);
         }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Conference;
 use App\Entity\Volunteering;
 use App\Form\VolunteeringType;
+use App\Notifier\Volunteering\VolunteeringRegistrationNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,7 @@ final class VolunteeringController extends AbstractController
     }
 
     #[Route('/volunteering/new', name: 'app_volunteering_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $manager): Response
+    public function new(Request $request, EntityManagerInterface $manager, VolunteeringRegistrationNotifier $notifier): Response
     {
         $volunteering = (new Volunteering())->setForUser($this->getUser());
         $options = [];
@@ -39,6 +40,8 @@ final class VolunteeringController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $manager->persist($volunteering);
             $manager->flush();
+
+            $notifier->sendConfirmation($volunteering);
 
             return $this->redirectToRoute('app_volunteering_show', ['id' => $volunteering->getId()]);
         }
