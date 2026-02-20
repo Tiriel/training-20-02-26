@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\VolunteeringStatus;
 use App\Repository\VolunteeringRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -34,6 +35,9 @@ class Volunteering
     #[ORM\ManyToOne(inversedBy: 'volunteerings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $forUser = null;
+
+    #[ORM\Column(enumType: VolunteeringStatus::class)]
+    private ?VolunteeringStatus $status = VolunteeringStatus::Pending;
 
     public function getId(): ?int
     {
@@ -84,6 +88,18 @@ class Volunteering
     public function setForUser(?User $forUser): static
     {
         $this->forUser = $forUser;
+
+        return $this;
+    }
+
+    public function getStatus(): ?VolunteeringStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(VolunteeringStatus $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

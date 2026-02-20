@@ -23,10 +23,39 @@
                                 </div>
                             </div>
                         </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Status</span>
+                            <span class="badge bg-secondary">{{ volunteering.status.value }}</span>
+                        </li>
                     </ul>
+                    <div class="card-footer">
+                        {# Available transition buttons #}
+                        <div class="d-flex gap-2 flex-wrap">
+                            {% for transition in workflow_transitions(volunteering) %}
+                                <form action="{{ path('app_volunteering_transition', {
+                                    id: volunteering.id,
+                                    transition: transition.name
+                                }) }}" method="POST">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        {{ transition.name|replace({'_': ' '})|title }}
+                                    </button>
+                                </form>
+                            {% endfor %}
+                        </div>
+
+                        {# Blockers for unavailable transitions #}
+                        {% for name in ['approve', 'activate', 'complete', 'cancel'] %}
+                            {% if not workflow_can(volunteering, name) %}
+                                {% for blocker in workflow_transition_blockers(volunteering, name) %}
+                                    <div class="alert alert-warning mt-2 mb-0 py-1 px-2 small">
+                                        {{ name|capitalize }} : {{ blocker.message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
