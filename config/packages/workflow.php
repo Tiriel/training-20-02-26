@@ -25,6 +25,11 @@ return App::config([
                     VolunteeringTransitions::Approve->value => [
                         'from' => VolunteeringStatus::Pending,
                         'to' => VolunteeringStatus::Approved,
+                        'metadata' => [
+                            'label' => 'Approve Volunteer',
+                            'description' => 'Confirm the volunteer is eligible',
+                            'required_role' => 'ROLE_ORGANIZER',
+                        ]
                     ],
                     VolunteeringTransitions::Activate->value => [
                         'from' => VolunteeringStatus::Approved,
